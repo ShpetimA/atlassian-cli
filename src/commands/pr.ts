@@ -138,6 +138,30 @@ export function createPrCommand(): Command {
       output(comments, globalOpts.format, globalOpts.output);
     });
 
+  pr.command("comment <repo> <id> <content>")
+    .description("Add comment to pull request")
+    .option("-f, --file <path>", "File path for inline comment")
+    .option("-l, --line <n>", "Line number for inline comment")
+    .action(async (repo: string, id: string, content: string, opts, cmd) => {
+      const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
+      const client = getClient();
+      const workspace = resolveWorkspace(globalOpts, client);
+
+      const inline =
+        opts.file && opts.line
+          ? { path: opts.file, to: parseInt(opts.line) }
+          : undefined;
+
+      const result = await client.addPullRequestComment(
+        workspace,
+        repo,
+        parseInt(id),
+        content,
+        inline
+      );
+      output(result, globalOpts.format, globalOpts.output);
+    });
+
   pr.command("activity <repo> <id>")
     .description("Get pull request activity")
     .option("-l, --limit <n>", "Number of results", "20")
@@ -179,6 +203,98 @@ export function createPrCommand(): Command {
       });
 
       output(result.values, globalOpts.format, globalOpts.output);
+    });
+
+  pr.command("add-pending <repo> <id> <content>")
+    .description("Add a pending (draft) comment to pull request")
+    .option("-f, --file <path>", "File path for inline comment")
+    .option("-l, --line <n>", "Line number for inline comment (new file)")
+    .option("--from <n>", "Line number for inline comment (old file, deletions)")
+    .action(async (repo: string, id: string, content: string, opts, cmd) => {
+      const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
+      const client = getClient();
+      const workspace = resolveWorkspace(globalOpts, client);
+
+      const inline =
+        opts.file
+          ? {
+              path: opts.file,
+              ...(opts.line && { to: parseInt(opts.line) }),
+              ...(opts.from && { from: parseInt(opts.from) }),
+            }
+          : undefined;
+
+      const result = await client.addPullRequestComment(
+        workspace,
+        repo,
+        parseInt(id),
+        content,
+        inline,
+        true // pending
+      );
+      output(result, globalOpts.format, globalOpts.output);
+    });
+
+  pr.command("update-comment <repo> <pr-id> <comment-id> <content>")
+    .description("Update an existing comment")
+    .action(async (repo: string, prId: string, commentId: string, content: string, opts, cmd) => {
+      const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
+      const client = getClient();
+      const workspace = resolveWorkspace(globalOpts, client);
+
+      const result = await client.updatePullRequestComment(
+        workspace,
+        repo,
+        parseInt(prId),
+        parseInt(commentId),
+        content
+      );
+      output(result, globalOpts.format, globalOpts.output);
+    });
+
+  pr.command("delete-comment <repo> <pr-id> <comment-id>")
+    .description("Delete a comment")
+    .action(async (repo: string, prId: string, commentId: string, opts, cmd) => {
+      const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
+      const client = getClient();
+      const workspace = resolveWorkspace(globalOpts, client);
+
+      await client.deletePullRequestComment(workspace, repo, parseInt(prId), parseInt(commentId));
+      console.log(`Comment ${commentId} deleted`);
+    });
+
+  pr.command("resolve-comment <repo> <pr-id> <comment-id>")
+    .description("Resolve a comment thread")
+    .action(async (repo: string, prId: string, commentId: string, opts, cmd) => {
+      const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
+      const client = getClient();
+      const workspace = resolveWorkspace(globalOpts, client);
+
+      const result = await client.resolveComment(
+        workspace,
+        repo,
+        parseInt(prId),
+        parseInt(commentId),
+        true
+      );
+      output(result, globalOpts.format, globalOpts.output);
+    });
+
+  pr.command("reopen-comment <repo> <pr-id> <comment-id>")
+    .description("Reopen a resolved comment thread")
+    .action(async (repo: string, prId: string, commentId: string, opts, cmd) => {
+      const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
+      const client = getClient();
+      const workspace = resolveWorkspace(globalOpts, client);
+
+      const result = await client.resolveComment(
+        workspace,
+        repo,
+        parseInt(prId),
+        parseInt(commentId),
+        false
+      );
+      output(result, globalOpts.format, globalOpts.output);
     });
 
   return pr;

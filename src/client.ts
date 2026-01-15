@@ -201,4 +201,72 @@ export class BitbucketClient {
     );
     return response.data;
   }
+
+  async addPullRequestComment(
+    workspace: string,
+    repoSlug: string,
+    prId: number,
+    content: string,
+    inline?: { path: string; to?: number; from?: number },
+    pending?: boolean
+  ): Promise<BitbucketComment> {
+    const body: Record<string, any> = { content: { raw: content } };
+    if (inline) {
+      body.inline = { path: inline.path };
+      if (inline.to !== undefined) body.inline.to = inline.to;
+      if (inline.from !== undefined) body.inline.from = inline.from;
+    }
+    if (pending !== undefined) {
+      body.pending = pending;
+    }
+    const response = await this.api.post(
+      `/repositories/${workspace}/${repoSlug}/pullrequests/${prId}/comments`,
+      body
+    );
+    return response.data;
+  }
+
+  async updatePullRequestComment(
+    workspace: string,
+    repoSlug: string,
+    prId: number,
+    commentId: number,
+    content: string,
+    pending?: boolean
+  ): Promise<BitbucketComment> {
+    const body: Record<string, any> = { content: { raw: content } };
+    if (pending !== undefined) {
+      body.pending = pending;
+    }
+    const response = await this.api.put(
+      `/repositories/${workspace}/${repoSlug}/pullrequests/${prId}/comments/${commentId}`,
+      body
+    );
+    return response.data;
+  }
+
+  async deletePullRequestComment(
+    workspace: string,
+    repoSlug: string,
+    prId: number,
+    commentId: number
+  ): Promise<void> {
+    await this.api.delete(
+      `/repositories/${workspace}/${repoSlug}/pullrequests/${prId}/comments/${commentId}`
+    );
+  }
+
+  async resolveComment(
+    workspace: string,
+    repoSlug: string,
+    prId: number,
+    commentId: number,
+    resolved: boolean
+  ): Promise<BitbucketComment> {
+    const response = await this.api.put(
+      `/repositories/${workspace}/${repoSlug}/pullrequests/${prId}/comments/${commentId}`,
+      { resolved }
+    );
+    return response.data;
+  }
 }
