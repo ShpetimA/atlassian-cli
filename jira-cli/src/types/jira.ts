@@ -205,3 +205,42 @@ export interface ProjectVersion {
   overdue?: boolean;
   projectId: number;
 }
+
+// Issue Link types
+export interface IssueLinkType {
+  id: string;
+  name: string;
+  inward: string;
+  outward: string;
+  self: string;
+}
+
+export interface IssueLinkTypesResponse {
+  issueLinkTypes: IssueLinkType[];
+}
+
+export interface LinkedIssue {
+  id: string;
+  key: string;
+  self: string;
+  fields: {
+    summary: string;
+    status: IssueStatus;
+    priority: IssuePriority;
+    issuetype: IssueType;
+  };
+}
+
+export interface IssueLink {
+  id: string;
+  self: string;
+  type: IssueLinkType;
+  inwardIssue?: LinkedIssue;
+  outwardIssue?: LinkedIssue;
+}
+
+export interface CreateIssueLinkRequest {
+  type: { name: string };
+  inwardIssue: { key: string };
+  outwardIssue: { key: string };
+}

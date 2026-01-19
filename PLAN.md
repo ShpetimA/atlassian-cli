@@ -445,7 +445,8 @@ jc task get 10042
 
 ### Phase 7: Polish
 - [x] Projects (list/get/statuses/components/versions)
-- [ ] Links, labels, filters
+- [x] Issue Links (link, links, link-types, unlink)
+- [ ] Labels, fields, filters
 - [ ] Worklogs, attachments, watchers
 - [ ] Error handling, retry
 - [ ] README, examples

@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { JiraClient } from "../clients/jira.js";
 import { resolveJiraConfig, getDefaultProject, getDefaultFormat } from "../config.js";
 import { output } from "../utils/output.js";
-import type { OutputFormat, CreateIssueRequest } from "../types/jira.js";
+import type { OutputFormat, CreateIssueRequest, IssueLink } from "../types/jira.js";
 
 export function createIssueCommand(): Command {
   const issue = new Command("issue").description("Manage Jira issues");
@@ -255,6 +255,86 @@ export function createIssueCommand(): Command {
 
       const result = await client.addComment(key, text);
       output(result, format, options.output);
+    });
+
+  // List link types
+  issue
+    .command("link-types")
+    .description("List available issue link types")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const linkTypes = await client.getIssueLinkTypes();
+      output(linkTypes, format, options.output);
+    });
+
+  // Get issue links (from issue fields)
+  issue
+    .command("links <key>")
+    .description("List links for an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const issueData = await client.getIssue(key, ["names"]);
+      const links: IssueLink[] = issueData.fields.issuelinks || [];
+      output(links, format, options.output);
+    });
+
+  // Create issue link
+  issue
+    .command("link <key1> <key2> <type>")
+    .description("Create a link between two issues (key1 is outward, key2 is inward)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key1, key2, typeName, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      // Validate link type exists
+      const linkTypes = await client.getIssueLinkTypes();
+      const linkType = linkTypes.find(
+        (t) => t.name.toLowerCase() === typeName.toLowerCase()
+      );
+      if (!linkType) {
+        const available = linkTypes.map((t) => t.name).join(", ");
+        throw new Error(`Link type not found: ${typeName}. Available: ${available}`);
+      }
+
+      await client.createIssueLink({
+        type: { name: linkType.name },
+        outwardIssue: { key: key1 },
+        inwardIssue: { key: key2 },
+      });
+
+      output({
+        success: true,
+        message: `Linked ${key1} ${linkType.outward} ${key2}`,
+        outwardIssue: key1,
+        inwardIssue: key2,
+        linkType: linkType.name,
+      }, format);
+    });
+
+  // Delete issue link
+  issue
+    .command("unlink <linkId>")
+    .description("Delete an issue link by ID")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (linkId, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      await client.deleteIssueLink(linkId);
+      output({ success: true, message: `Link ${linkId} deleted` }, format);
     });
 
   return issue;

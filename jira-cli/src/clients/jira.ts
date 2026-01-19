@@ -15,6 +15,9 @@ import type {
   ProjectStatus,
   ProjectComponent,
   ProjectVersion,
+  IssueLinkType,
+  IssueLinkTypesResponse,
+  CreateIssueLinkRequest,
 } from "../types/jira.js";
 
 export class JiraClient {
@@ -270,6 +273,32 @@ export class JiraClient {
 
       const response = await this.client.get(`/project/${projectKeyOrId}/version`, { params });
       return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Issue Links
+  async getIssueLinkTypes(): Promise<IssueLinkType[]> {
+    try {
+      const response = await this.client.get<IssueLinkTypesResponse>("/issueLinkType");
+      return response.data.issueLinkTypes;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async createIssueLink(request: CreateIssueLinkRequest): Promise<void> {
+    try {
+      await this.client.post("/issueLink", request);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async deleteIssueLink(linkId: string): Promise<void> {
+    try {
+      await this.client.delete(`/issueLink/${linkId}`);
     } catch (error) {
       this.handleError(error as AxiosError);
     }

@@ -157,3 +157,26 @@ API coverage:
 - GET /project/{key}/version - list versions with pagination
 
 Note for next person: Phase 7 continues with links, labels, fields, filters. Consider issue links (POST /issueLink, GET /issueLinkType) as next priority - useful for dependency tracking. Async task polling (Phase 5) remains low priority.
+
+## 2026-01-19 - Phase 7 Partial (Issue Links)
+
+Implemented `jc issue link/links/link-types/unlink` commands for issue dependency tracking.
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added IssueLinkType, IssueLinkTypesResponse, LinkedIssue, IssueLink, CreateIssueLinkRequest types
+- jira-cli/src/clients/jira.ts - Added getIssueLinkTypes, createIssueLink, deleteIssueLink methods
+- jira-cli/src/commands/issue.ts - Added link-types, links, link, unlink subcommands
+
+Commands implemented:
+- jc issue link-types - List available link types (e.g., "Blocks", "Clones", "Relates")
+- jc issue links <key> - List all links for an issue
+- jc issue link <key1> <key2> <type> - Create link (key1 outward, key2 inward)
+- jc issue unlink <linkId> - Delete a link by ID
+
+API coverage:
+- GET /issueLinkType - list link types
+- POST /issueLink - create link
+- DELETE /issueLink/{id} - delete link
+- GET /issue/{key} with issuelinks field - get issue links
+
+Note for next person: Phase 7 continues with labels (`jc labels`, `jc fields`, `jc issue add-label`) and filters. Could also do worklogs/attachments but those are P2. Async task polling (Phase 5) still low priority.
