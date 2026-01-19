@@ -417,11 +417,11 @@ jc task get 10042
 - [ ] `jc issue transitions/transition`
 - [ ] marklassian integration
 
-### Phase 3: Agile - Boards & Sprints
-- [ ] JiraAgileClient
-- [ ] `jc board list/get/issues/backlog`
-- [ ] `jc sprint list/get/issues/create/start/close`
-- [ ] `jc sprint move-issues`
+### Phase 3: Agile - Boards & Sprints ✅
+- [x] JiraAgileClient
+- [x] `jc board list/get/issues/backlog`
+- [x] `jc sprint list/get/issues/create/start/close`
+- [x] `jc sprint move-issues`
 
 ### Phase 4: Agile - Epics & Backlog
 - [ ] `jc epic list/get/issues/move-issues`

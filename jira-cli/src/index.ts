@@ -4,6 +4,8 @@ import { Command } from "commander";
 import { createIssueCommand } from "./commands/issue.js";
 import { createConfigCommand } from "./commands/config.js";
 import { createSearchCommand } from "./commands/search.js";
+import { createBoardCommand } from "./commands/board.js";
+import { createSprintCommand } from "./commands/sprint.js";
 
 const program = new Command();
 
@@ -21,5 +23,7 @@ program
 program.addCommand(createIssueCommand());
 program.addCommand(createConfigCommand());
 program.addCommand(createSearchCommand());
+program.addCommand(createBoardCommand());
+program.addCommand(createSprintCommand());
 
 program.parse();

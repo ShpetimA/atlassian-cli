@@ -24,3 +24,23 @@ Commands implemented:
 Auth: env vars (JIRA_DOMAIN, JIRA_EMAIL, JIRA_API_TOKEN) or config file
 
 Note for next person: Phase 2 (Issue CRUD + ADF) partially done since create/edit/delete/assign already implemented. Focus on marklassian integration for proper ADF conversion.
+
+## 2026-01-19 - Phase 3 Complete (Agile - Boards & Sprints)
+
+Implemented full agile support in jira-cli:
+
+Files created:
+- jira-cli/src/types/agile.ts - Board, Sprint, BoardConfiguration types
+- jira-cli/src/clients/jira-agile.ts - JiraAgileClient for /rest/agile/1.0 API
+- jira-cli/src/commands/board.ts - Board commands
+- jira-cli/src/commands/sprint.ts - Sprint commands
+
+Commands implemented:
+- jc board list/get/config/issues/backlog
+- jc sprint list/get/issues/create/start/close/move-issues/to-backlog
+
+API coverage:
+- Boards: list, get, configuration, issues, backlog
+- Sprints: list, get, issues, create, update (start/close), move issues
+
+Note for next person: Phase 4 (Epics & Backlog) is next. Also Phase 2 still needs marklassian for ADF conversion - lower priority since raw ADF works.
