@@ -13,6 +13,7 @@ import { createProjectCommand } from "./commands/project.js";
 import { createLabelCommand } from "./commands/label.js";
 import { createFieldCommand } from "./commands/field.js";
 import { createFilterCommand } from "./commands/filter.js";
+import { createTaskCommand } from "./commands/task.js";
 
 const program = new Command();
 
@@ -39,5 +40,6 @@ program.addCommand(createProjectCommand());
 program.addCommand(createLabelCommand());
 program.addCommand(createFieldCommand());
 program.addCommand(createFilterCommand());
+program.addCommand(createTaskCommand());
 
 program.parse();

@@ -30,6 +30,8 @@ import type {
   UpdateWorklogRequest,
   Attachment,
   Watchers,
+  TaskResult,
+  ArchiveIssuesResponse,
 } from "../types/jira.js";
 import * as fs from "fs";
 import * as path from "path";
@@ -579,6 +581,48 @@ export class JiraClient {
   async getCurrentUser(): Promise<{ accountId: string; displayName: string; emailAddress?: string }> {
     try {
       const response = await this.client.get("/myself");
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Async Tasks
+  async getTask(taskId: string): Promise<TaskResult> {
+    try {
+      const response = await this.client.get<TaskResult>(`/task/${taskId}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async cancelTask(taskId: string): Promise<void> {
+    try {
+      await this.client.post(`/task/${taskId}/cancel`);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Archive Issues (async operation)
+  async archiveIssues(issueIdsOrKeys: string[]): Promise<ArchiveIssuesResponse> {
+    try {
+      const response = await this.client.post<ArchiveIssuesResponse>("/issue/archive", {
+        issueIdsOrKeys,
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async archiveIssuesByJql(jql: string): Promise<string> {
+    try {
+      const response = await this.client.post("/issue/archive", null, {
+        params: { jql },
+      });
+      // Response body contains taskId as string
       return response.data;
     } catch (error) {
       this.handleError(error as AxiosError);

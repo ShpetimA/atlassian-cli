@@ -430,12 +430,13 @@ jc task get 10042
 - [x] `jc epic rank` (backlog ranking)
 - [ ] Velocity/burndown reports (P2, deferred)
 
-### Phase 5: Comments, Search, Bulk
+### Phase 5: Comments, Search, Bulk ✅
 - [x] `jc issue comments/comment` (moved to Phase 2)
 - [x] `jc search <jql>`
 - [x] `jc search count` (approximate count)
-- [ ] Async task polling
-- [ ] `jc issue archive`
+- [x] Async task polling
+- [x] `jc issue archive`
+- [x] `jc task get/cancel`
 
 ### Phase 6: Confluence ✅
 - [x] ConfluenceClient

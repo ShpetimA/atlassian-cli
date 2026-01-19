@@ -389,3 +389,37 @@ export interface Watchers {
   isWatching: boolean;
   watchers?: User[];
 }
+
+// Async Task types (for bulk operations)
+export type TaskStatus = "ENQUEUED" | "RUNNING" | "COMPLETE" | "FAILED" | "CANCEL_REQUESTED" | "CANCELLED" | "DEAD";
+
+export interface TaskProgress {
+  submitted: number;
+  succeeded: number;
+  failed: number;
+  total: number;
+  percent: number;
+}
+
+export interface TaskResult {
+  self: string;
+  id: string;
+  status: TaskStatus;
+  message?: string;
+  result?: any;
+  submittedBy: string;
+  progress: TaskProgress;
+  elapsedRuntime: number;
+  submitted: number;
+  started: number;
+  finished?: number;
+  lastUpdate: number;
+}
+
+export interface ArchiveIssuesRequest {
+  issueIdsOrKeys: string[];
+}
+
+export interface ArchiveIssuesResponse {
+  taskId: string;
+}

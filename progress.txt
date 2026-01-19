@@ -350,3 +350,39 @@ Retry behavior:
 - Configurable via RetryConfig interface
 
 Note for next person: Phase 7 complete. Remaining: Phase 5 async task polling + jc issue archive (low priority). marklassian ADF conversion still deferred. CLI is production-ready at this point.
+
+## 2026-01-19 - Phase 5 Complete (Async Tasks & Archive)
+
+Implemented async task polling and issue archival.
+
+Files created:
+- jira-cli/src/utils/polling.ts - pollTask utility with configurable interval/timeout/progress callback
+- jira-cli/src/commands/task.ts - Task commands
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added TaskStatus, TaskProgress, TaskResult, ArchiveIssuesRequest/Response types
+- jira-cli/src/clients/jira.ts - Added getTask, cancelTask, archiveIssues, archiveIssuesByJql methods
+- jira-cli/src/commands/issue.ts - Added archive subcommand
+- jira-cli/src/index.ts - Registered task command
+
+Commands implemented:
+- jc task get <taskId> - Get async task status
+- jc task cancel <taskId> - Cancel running task
+- jc issue archive --jql <query> [--wait] - Archive issues by JQL
+- jc issue archive --issues KEY-1,KEY-2 [--wait] - Archive specific issues
+
+API coverage:
+- GET /task/{id} - get task status
+- POST /task/{id}/cancel - cancel task
+- POST /issue/archive - archive issues (returns taskId)
+
+Polling behavior:
+- 2s poll interval by default
+- 5 minute timeout
+- Optional onProgress callback
+- Stops on terminal states: COMPLETE, FAILED, CANCELLED, DEAD
+
+Note for next person: All PLAN.md phases complete! Remaining:
+- marklassian ADF conversion (Phase 2 - deferred, raw ADF works)
+- Velocity/burndown reports (Phase 4 - P2, deferred)
+CLI is feature-complete for v1.0.

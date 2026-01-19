@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { JiraClient } from "../clients/jira.js";
 import { resolveJiraConfig, getDefaultProject, getDefaultFormat } from "../config.js";
 import { output } from "../utils/output.js";
+import { pollTask } from "../utils/polling.js";
 import type { OutputFormat, CreateIssueRequest, IssueLink } from "../types/jira.js";
 
 export function createIssueCommand(): Command {
@@ -571,6 +572,53 @@ export function createIssueCommand(): Command {
 
       await client.removeWatcher(key, accountId);
       output({ success: true, key, message: "Stopped watching issue" }, format);
+    });
+
+  // Archive issues (async operation)
+  issue
+    .command("archive")
+    .description("Archive issues (async operation)")
+    .option("-j, --jql <query>", "JQL query to select issues to archive")
+    .option("--issues <keys>", "Comma-separated issue keys to archive")
+    .option("--wait", "Wait for operation to complete (poll task)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      if (!options.jql && !options.issues) {
+        throw new Error("Either --jql or --issues is required");
+      }
+
+      let taskId: string;
+
+      if (options.jql) {
+        // Archive by JQL
+        taskId = await client.archiveIssuesByJql(options.jql);
+      } else {
+        // Archive by issue keys
+        const issueKeys = options.issues.split(",").map((k: string) => k.trim());
+        const response = await client.archiveIssues(issueKeys);
+        taskId = response.taskId;
+      }
+
+      if (options.wait) {
+        // Poll until complete
+        const result = await pollTask(client, taskId, {
+          onProgress: (task) => {
+            if (format === "json") return;
+            const pct = task.progress.percent;
+            process.stderr.write(`\rProgress: ${pct}% (${task.progress.succeeded}/${task.progress.total})`);
+          },
+        });
+        if (format !== "json") process.stderr.write("\n");
+        output(result, format, options.output);
+      } else {
+        // Return task ID immediately
+        output({ taskId, status: "ENQUEUED", message: "Use 'jc task get' to check status" }, format, options.output);
+      }
     });
 
   return issue;
