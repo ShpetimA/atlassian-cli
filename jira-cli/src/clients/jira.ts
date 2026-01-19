@@ -20,6 +20,10 @@ import type {
   CreateIssueLinkRequest,
   LabelsResponse,
   JiraField,
+  Filter,
+  FilterSearchResult,
+  CreateFilterRequest,
+  UpdateFilterRequest,
 } from "../types/jira.js";
 
 export class JiraClient {
@@ -328,6 +332,77 @@ export class JiraClient {
     try {
       const response = await this.client.get<JiraField[]>("/field");
       return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Filters
+  async searchFilters(options: {
+    filterName?: string;
+    accountId?: string;
+    owner?: string;
+    groupname?: string;
+    projectId?: number;
+    orderBy?: string;
+    startAt?: number;
+    maxResults?: number;
+    expand?: string[];
+    favourites?: boolean;
+  } = {}): Promise<FilterSearchResult> {
+    try {
+      const params: Record<string, any> = {
+        startAt: options.startAt || 0,
+        maxResults: options.maxResults || 50,
+      };
+      if (options.filterName) params.filterName = options.filterName;
+      if (options.accountId) params.accountId = options.accountId;
+      if (options.owner) params.owner = options.owner;
+      if (options.groupname) params.groupname = options.groupname;
+      if (options.projectId) params.projectId = options.projectId;
+      if (options.orderBy) params.orderBy = options.orderBy;
+      if (options.expand?.length) params.expand = options.expand.join(",");
+
+      const endpoint = options.favourites ? "/filter/favourite" : "/filter/search";
+      const response = await this.client.get<FilterSearchResult>(endpoint, { params });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getFilter(filterId: string, expand?: string[]): Promise<Filter> {
+    try {
+      const params: Record<string, string> = {};
+      if (expand?.length) params.expand = expand.join(",");
+      const response = await this.client.get<Filter>(`/filter/${filterId}`, { params });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async createFilter(request: CreateFilterRequest): Promise<Filter> {
+    try {
+      const response = await this.client.post<Filter>("/filter", request);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async updateFilter(filterId: string, request: UpdateFilterRequest): Promise<Filter> {
+    try {
+      const response = await this.client.put<Filter>(`/filter/${filterId}`, request);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async deleteFilter(filterId: string): Promise<void> {
+    try {
+      await this.client.delete(`/filter/${filterId}`);
     } catch (error) {
       this.handleError(error as AxiosError);
     }

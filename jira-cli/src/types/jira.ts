@@ -277,3 +277,58 @@ export interface JiraField {
     customId?: number;
   };
 }
+
+// Filter types
+export interface FilterOwner {
+  accountId: string;
+  displayName: string;
+  active: boolean;
+}
+
+export interface Filter {
+  id: string;
+  self: string;
+  name: string;
+  description?: string;
+  owner: FilterOwner;
+  jql: string;
+  viewUrl: string;
+  searchUrl: string;
+  favourite: boolean;
+  favouritedCount: number;
+  sharePermissions: FilterSharePermission[];
+  editPermissions: FilterSharePermission[];
+}
+
+export interface FilterSharePermission {
+  id: number;
+  type: "global" | "project" | "group" | "user" | "projectRole" | "loggedin" | "authenticated";
+  project?: Project;
+  group?: { name: string };
+  user?: User;
+}
+
+export interface FilterSearchResult {
+  self: string;
+  maxResults: number;
+  startAt: number;
+  total: number;
+  isLast: boolean;
+  values: Filter[];
+}
+
+export interface CreateFilterRequest {
+  name: string;
+  description?: string;
+  jql: string;
+  favourite?: boolean;
+  sharePermissions?: Omit<FilterSharePermission, "id">[];
+}
+
+export interface UpdateFilterRequest {
+  name?: string;
+  description?: string;
+  jql?: string;
+  favourite?: boolean;
+  sharePermissions?: Omit<FilterSharePermission, "id">[];
+}

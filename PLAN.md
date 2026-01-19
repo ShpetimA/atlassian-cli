@@ -447,7 +447,7 @@ jc task get 10042
 - [x] Projects (list/get/statuses/components/versions)
 - [x] Issue Links (link, links, link-types, unlink)
 - [x] Labels & Fields (label list, field list, issue add-label/remove-label)
-- [ ] Filters
+- [x] Filters (list, get, create, update, delete)
 - [ ] Worklogs, attachments, watchers
 - [ ] Error handling, retry
 - [ ] README, examples

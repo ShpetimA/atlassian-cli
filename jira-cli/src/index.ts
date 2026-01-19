@@ -12,6 +12,7 @@ import { createPageCommand } from "./commands/page.js";
 import { createProjectCommand } from "./commands/project.js";
 import { createLabelCommand } from "./commands/label.js";
 import { createFieldCommand } from "./commands/field.js";
+import { createFilterCommand } from "./commands/filter.js";
 
 const program = new Command();
 
@@ -37,5 +38,6 @@ program.addCommand(createPageCommand());
 program.addCommand(createProjectCommand());
 program.addCommand(createLabelCommand());
 program.addCommand(createFieldCommand());
+program.addCommand(createFilterCommand());
 
 program.parse();

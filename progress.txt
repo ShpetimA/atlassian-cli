@@ -207,3 +207,32 @@ API coverage:
 - PUT /issue/{key} with labels field - add/remove labels
 
 Note for next person: Phase 7 continues with filters (jc filter list/get/create). Worklogs/attachments/watchers are P2. Async task polling still low priority. Consider README once core features done.
+
+## 2026-01-19 - Phase 7 Partial (Filters)
+
+Implemented `jc filter` commands for saved filter management.
+
+Files created:
+- jira-cli/src/commands/filter.ts - Filter commands (list, get, create, update, delete)
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added Filter, FilterOwner, FilterSharePermission, FilterSearchResult, CreateFilterRequest, UpdateFilterRequest types
+- jira-cli/src/clients/jira.ts - Added searchFilters, getFilter, createFilter, updateFilter, deleteFilter methods
+- jira-cli/src/index.ts - Registered filter command
+
+Commands implemented:
+- jc filter list [-n name] [--owner] [--project] [--favourites] [--order-by]
+- jc filter get <id> [--expand sharedUsers,subscriptions]
+- jc filter create --name <name> --jql <jql> [--description] [--favourite]
+- jc filter update <id> [--name] [--jql] [--description] [--favourite|--no-favourite]
+- jc filter delete <id>
+
+API coverage:
+- GET /filter/search - search filters
+- GET /filter/favourite - list favourite filters
+- GET /filter/{id} - get filter
+- POST /filter - create filter
+- PUT /filter/{id} - update filter
+- DELETE /filter/{id} - delete filter
+
+Note for next person: Phase 7 core complete. Remaining: worklogs/attachments/watchers (P2), error handling/retry, README. Async task polling (Phase 5) still outstanding but low priority. Consider shipping v1.0 and documenting what's done.
