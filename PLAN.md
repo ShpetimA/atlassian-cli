@@ -451,7 +451,7 @@ jc task get 10042
 - [x] Worklogs (worklogs, worklog, worklog-edit, worklog-delete)
 - [x] Attachments (attachments, attach, attachment-delete)
 - [x] Watchers (watchers, watch, unwatch)
-- [ ] Error handling, retry
+- [x] Error handling, retry (exponential backoff for 429/5xx/network errors)
 - [x] README, examples
 
 ---

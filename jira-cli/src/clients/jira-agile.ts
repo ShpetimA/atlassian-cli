@@ -15,6 +15,7 @@ import type {
   MoveIssuesToEpicRequest,
   RankIssuesRequest,
 } from "../types/agile.js";
+import { addRetryInterceptor } from "../utils/retry.js";
 
 export class JiraAgileClient {
   private client: AxiosInstance;
@@ -31,6 +32,9 @@ export class JiraAgileClient {
         Accept: "application/json",
       },
     });
+
+    // Add retry with exponential backoff for rate limits and transient errors
+    addRetryInterceptor(this.client);
   }
 
   private handleError(error: AxiosError): never {

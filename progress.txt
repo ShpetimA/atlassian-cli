@@ -327,3 +327,26 @@ Documentation covers:
 - "Not Implemented" section documenting gaps
 
 Note for next person: README done. Remaining work: error handling/retry (exponential backoff in JiraClient), async task polling (Phase 5). Consider shipping v1.0 at this point - all features documented and working.
+
+## 2026-01-19 - Error Handling with Retry
+
+Added exponential backoff retry to all API clients.
+
+Files created:
+- jira-cli/src/utils/retry.ts - Reusable retry interceptor for axios
+
+Files modified:
+- jira-cli/src/clients/jira.ts - Added retry interceptor
+- jira-cli/src/clients/jira-agile.ts - Added retry interceptor
+- jira-cli/src/clients/confluence.ts - Added retry interceptor
+
+Retry behavior:
+- Max 3 retries by default
+- Exponential backoff: 1s → 2s → 4s (with jitter)
+- Max delay capped at 30s
+- Retries on: 429 (rate limit), 500, 502, 503, 504 (server errors)
+- Retries network errors: ECONNRESET, ETIMEDOUT, ENOTFOUND, ECONNREFUSED, EPIPE
+- Respects Retry-After header when present (common for 429)
+- Configurable via RetryConfig interface
+
+Note for next person: Phase 7 complete. Remaining: Phase 5 async task polling + jc issue archive (low priority). marklassian ADF conversion still deferred. CLI is production-ready at this point.

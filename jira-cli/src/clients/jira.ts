@@ -34,6 +34,7 @@ import type {
 import * as fs from "fs";
 import * as path from "path";
 import FormData from "form-data";
+import { addRetryInterceptor } from "../utils/retry.js";
 
 export class JiraClient {
   private client: AxiosInstance;
@@ -52,6 +53,9 @@ export class JiraClient {
         Accept: "application/json",
       },
     });
+
+    // Add retry with exponential backoff for rate limits and transient errors
+    addRetryInterceptor(this.client);
   }
 
   private handleError(error: AxiosError): never {
