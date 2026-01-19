@@ -9,6 +9,7 @@ import { createSprintCommand } from "./commands/sprint.js";
 import { createEpicCommand } from "./commands/epic.js";
 import { createSpaceCommand } from "./commands/space.js";
 import { createPageCommand } from "./commands/page.js";
+import { createProjectCommand } from "./commands/project.js";
 
 const program = new Command();
 
@@ -31,5 +32,6 @@ program.addCommand(createSprintCommand());
 program.addCommand(createEpicCommand());
 program.addCommand(createSpaceCommand());
 program.addCommand(createPageCommand());
+program.addCommand(createProjectCommand());
 
 program.parse();

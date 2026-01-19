@@ -10,6 +10,11 @@ import type {
   CreateIssueRequest,
   UpdateIssueRequest,
   ApproximateCountResponse,
+  ProjectFull,
+  ProjectSearchResult,
+  ProjectStatus,
+  ProjectComponent,
+  ProjectVersion,
 } from "../types/jira.js";
 
 export class JiraClient {
@@ -193,17 +198,77 @@ export class JiraClient {
   }
 
   // Projects
-  async getProjects(options: {
+  async listProjects(options: {
     startAt?: number;
     maxResults?: number;
-  } = {}): Promise<{ values: any[]; total: number }> {
+    expand?: string[];
+    query?: string;
+    typeKey?: string;
+    orderBy?: string;
+  } = {}): Promise<ProjectSearchResult> {
     try {
-      const response = await this.client.get("/project/search", {
-        params: {
-          startAt: options.startAt || 0,
-          maxResults: options.maxResults || 50,
-        },
-      });
+      const params: Record<string, any> = {
+        startAt: options.startAt || 0,
+        maxResults: options.maxResults || 50,
+      };
+      if (options.expand?.length) params.expand = options.expand.join(",");
+      if (options.query) params.query = options.query;
+      if (options.typeKey) params.typeKey = options.typeKey;
+      if (options.orderBy) params.orderBy = options.orderBy;
+
+      const response = await this.client.get<ProjectSearchResult>("/project/search", { params });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getProject(projectKeyOrId: string, expand?: string[]): Promise<ProjectFull> {
+    try {
+      const params: Record<string, string> = {};
+      if (expand?.length) params.expand = expand.join(",");
+      const response = await this.client.get<ProjectFull>(`/project/${projectKeyOrId}`, { params });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getProjectStatuses(projectKeyOrId: string): Promise<ProjectStatus[]> {
+    try {
+      const response = await this.client.get<ProjectStatus[]>(`/project/${projectKeyOrId}/statuses`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getProjectComponents(projectKeyOrId: string): Promise<ProjectComponent[]> {
+    try {
+      const response = await this.client.get<ProjectComponent[]>(`/project/${projectKeyOrId}/components`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getProjectVersions(projectKeyOrId: string, options: {
+    startAt?: number;
+    maxResults?: number;
+    orderBy?: string;
+    status?: string;
+    expand?: string[];
+  } = {}): Promise<{ values: ProjectVersion[]; startAt: number; maxResults: number; total: number; isLast: boolean }> {
+    try {
+      const params: Record<string, any> = {
+        startAt: options.startAt || 0,
+        maxResults: options.maxResults || 50,
+      };
+      if (options.orderBy) params.orderBy = options.orderBy;
+      if (options.status) params.status = options.status;
+      if (options.expand?.length) params.expand = options.expand.join(",");
+
+      const response = await this.client.get(`/project/${projectKeyOrId}/version`, { params });
       return response.data;
     } catch (error) {
       this.handleError(error as AxiosError);

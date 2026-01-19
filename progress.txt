@@ -131,3 +131,29 @@ API coverage:
 - POST /pages/{id}/labels - add label
 
 Note for next person: Phase 7 (Polish) is next: projects, links, labels, filters, worklogs, attachments, watchers. Phase 5 async task polling still outstanding but low priority.
+
+## 2026-01-19 - Phase 7 Partial (Projects)
+
+Implemented `jc project` commands for project management.
+
+Files modified/created:
+- jira-cli/src/types/jira.ts - Added ProjectFull, ProjectSearchResult, ProjectStatus, ProjectComponent, ProjectVersion types
+- jira-cli/src/clients/jira.ts - Added listProjects, getProject, getProjectStatuses, getProjectComponents, getProjectVersions methods
+- jira-cli/src/commands/project.ts - New file with project commands
+- jira-cli/src/index.ts - Registered project command
+
+Commands implemented:
+- jc project list [-q query] [--type software|business|service_desk] [--order-by name]
+- jc project get <key> [--expand description,lead,issueTypes]
+- jc project statuses <key>
+- jc project components <key>
+- jc project versions <key> [--status released|unreleased|archived]
+
+API coverage:
+- GET /project/search - list projects with filtering
+- GET /project/{key} - get project details
+- GET /project/{key}/statuses - list statuses by issue type
+- GET /project/{key}/components - list components
+- GET /project/{key}/version - list versions with pagination
+
+Note for next person: Phase 7 continues with links, labels, fields, filters. Consider issue links (POST /issueLink, GET /issueLinkType) as next priority - useful for dependency tracking. Async task polling (Phase 5) remains low priority.

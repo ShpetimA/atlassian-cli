@@ -143,3 +143,65 @@ export interface UpdateIssueRequest {
 export interface ApproximateCountResponse {
   count: number;
 }
+
+// Project-related types
+export interface ProjectFull {
+  id: string;
+  key: string;
+  name: string;
+  description?: string;
+  projectTypeKey: string;
+  simplified: boolean;
+  style: string;
+  lead?: User;
+  url?: string;
+  avatarUrls?: Record<string, string>;
+  issueTypes?: IssueType[];
+  projectCategory?: {
+    id: string;
+    name: string;
+    description?: string;
+  };
+}
+
+export interface ProjectSearchResult {
+  self: string;
+  maxResults: number;
+  startAt: number;
+  total: number;
+  isLast: boolean;
+  values: ProjectFull[];
+}
+
+export interface ProjectStatus {
+  id: string;
+  name: string;
+  description?: string;
+  self: string;
+  statuses: IssueStatus[];
+}
+
+export interface ProjectComponent {
+  id: string;
+  name: string;
+  description?: string;
+  lead?: User;
+  assigneeType?: string;
+  assignee?: User;
+  realAssigneeType?: string;
+  realAssignee?: User;
+  project: string;
+  projectId: number;
+}
+
+export interface ProjectVersion {
+  id: string;
+  name: string;
+  description?: string;
+  archived: boolean;
+  released: boolean;
+  releaseDate?: string;
+  startDate?: string;
+  overdue?: boolean;
+  projectId: number;
+}
