@@ -282,3 +282,25 @@ API coverage:
 - DELETE /attachment/{id} - delete attachment
 
 Note for next person: Remaining Phase 7: watchers. Then error handling/retry, README. Phase 5 async task polling still low priority. Watchers lower value than attachments but straightforward to add. Could also consider shipping v1.0 documentation at this point.
+
+## 2026-01-19 - Phase 7 Complete (Watchers)
+
+Implemented `jc issue watchers/watch/unwatch` commands for issue watching.
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added Watchers type
+- jira-cli/src/clients/jira.ts - Added getWatchers, addWatcher, removeWatcher, getCurrentUser methods
+- jira-cli/src/commands/issue.ts - Added watchers, watch, unwatch subcommands
+
+Commands implemented:
+- jc issue watchers <key> - List watchers on issue
+- jc issue watch <key> [--user <accountId>] - Watch issue (self by default)
+- jc issue unwatch <key> [--user <accountId>] - Unwatch issue (self by default)
+
+API coverage:
+- GET /issue/{key}/watchers - list watchers
+- POST /issue/{key}/watchers - add watcher
+- DELETE /issue/{key}/watchers?accountId= - remove watcher
+- GET /myself - get current user (for self-watch)
+
+Note for next person: Phase 7 feature work complete. Remaining: error handling/retry, README. Phase 5 async task polling + jc issue archive still deferred. Consider writing README with all command docs, or adding exponential backoff retry to JiraClient.

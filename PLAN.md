@@ -450,7 +450,7 @@ jc task get 10042
 - [x] Filters (list, get, create, update, delete)
 - [x] Worklogs (worklogs, worklog, worklog-edit, worklog-delete)
 - [x] Attachments (attachments, attach, attachment-delete)
-- [ ] Watchers
+- [x] Watchers (watchers, watch, unwatch)
 - [ ] Error handling, retry
 - [ ] README, examples
 

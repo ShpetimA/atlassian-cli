@@ -381,3 +381,11 @@ export interface Attachment {
   content: string;
   thumbnail?: string;
 }
+
+// Watcher types
+export interface Watchers {
+  self: string;
+  watchCount: number;
+  isWatching: boolean;
+  watchers?: User[];
+}

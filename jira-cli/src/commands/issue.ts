@@ -516,5 +516,62 @@ export function createIssueCommand(): Command {
       output({ success: true, attachmentId, message: "Attachment deleted" }, format);
     });
 
+  // List watchers
+  issue
+    .command("watchers <key>")
+    .description("List watchers on an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const watchers = await client.getWatchers(key);
+      output(watchers, format, options.output);
+    });
+
+  // Watch issue (add current user as watcher)
+  issue
+    .command("watch <key>")
+    .description("Watch an issue (add yourself as watcher)")
+    .option("--user <accountId>", "User account ID to add (defaults to self)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      let accountId = options.user;
+      if (!accountId) {
+        const me = await client.getCurrentUser();
+        accountId = me.accountId;
+      }
+
+      await client.addWatcher(key, accountId);
+      output({ success: true, key, message: "Now watching issue" }, format);
+    });
+
+  // Unwatch issue (remove current user as watcher)
+  issue
+    .command("unwatch <key>")
+    .description("Unwatch an issue (remove yourself as watcher)")
+    .option("--user <accountId>", "User account ID to remove (defaults to self)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      let accountId = options.user;
+      if (!accountId) {
+        const me = await client.getCurrentUser();
+        accountId = me.accountId;
+      }
+
+      await client.removeWatcher(key, accountId);
+      output({ success: true, key, message: "Stopped watching issue" }, format);
+    });
+
   return issue;
 }

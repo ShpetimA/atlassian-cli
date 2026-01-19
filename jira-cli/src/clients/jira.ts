@@ -29,6 +29,7 @@ import type {
   CreateWorklogRequest,
   UpdateWorklogRequest,
   Attachment,
+  Watchers,
 } from "../types/jira.js";
 import * as fs from "fs";
 import * as path from "path";
@@ -536,6 +537,45 @@ export class JiraClient {
   async deleteAttachment(attachmentId: string): Promise<void> {
     try {
       await this.client.delete(`/attachment/${attachmentId}`);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Watchers
+  async getWatchers(issueKey: string): Promise<Watchers> {
+    try {
+      const response = await this.client.get<Watchers>(`/issue/${issueKey}/watchers`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async addWatcher(issueKey: string, accountId: string): Promise<void> {
+    try {
+      await this.client.post(`/issue/${issueKey}/watchers`, JSON.stringify(accountId), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async removeWatcher(issueKey: string, accountId: string): Promise<void> {
+    try {
+      await this.client.delete(`/issue/${issueKey}/watchers`, {
+        params: { accountId },
+      });
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getCurrentUser(): Promise<{ accountId: string; displayName: string; emailAddress?: string }> {
+    try {
+      const response = await this.client.get("/myself");
+      return response.data;
     } catch (error) {
       this.handleError(error as AxiosError);
     }
