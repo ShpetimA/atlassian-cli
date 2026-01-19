@@ -472,5 +472,49 @@ export function createIssueCommand(): Command {
       output({ success: true, key, worklogId, message: "Worklog deleted" }, format);
     });
 
+  // List attachments
+  issue
+    .command("attachments <key>")
+    .description("List attachments on an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const attachments = await client.getAttachments(key);
+      output(attachments, format, options.output);
+    });
+
+  // Add attachment
+  issue
+    .command("attach <key> <file>")
+    .description("Attach a file to an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, file, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const result = await client.addAttachment(key, file);
+      output(result, format, options.output);
+    });
+
+  // Delete attachment
+  issue
+    .command("attachment-delete <attachmentId>")
+    .description("Delete an attachment by ID")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (attachmentId, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      await client.deleteAttachment(attachmentId);
+      output({ success: true, attachmentId, message: "Attachment deleted" }, format);
+    });
+
   return issue;
 }

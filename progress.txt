@@ -260,3 +260,25 @@ API coverage:
 - DELETE /issue/{key}/worklog/{id} - delete worklog
 
 Note for next person: Remaining Phase 7: attachments, watchers. Then error handling/retry, README. Phase 5 async task polling still low priority. Attachments probably next highest value (allow uploading files to issues).
+
+## 2026-01-19 - Phase 7 Partial (Attachments)
+
+Implemented `jc issue attachments/attach/attachment-delete` commands for file attachments.
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added Attachment type
+- jira-cli/src/clients/jira.ts - Added getAttachments, addAttachment, deleteAttachment methods; added form-data import
+- jira-cli/src/commands/issue.ts - Added attachments, attach, attachment-delete subcommands
+- jira-cli/package.json - Added form-data dependency
+
+Commands implemented:
+- jc issue attachments <key> - List attachments on issue
+- jc issue attach <key> <file> - Upload file to issue
+- jc issue attachment-delete <attachmentId> - Delete attachment by ID
+
+API coverage:
+- GET /issue/{key} with attachment field - list attachments
+- POST /issue/{key}/attachments - upload file (multipart/form-data with X-Atlassian-Token: no-check)
+- DELETE /attachment/{id} - delete attachment
+
+Note for next person: Remaining Phase 7: watchers. Then error handling/retry, README. Phase 5 async task polling still low priority. Watchers lower value than attachments but straightforward to add. Could also consider shipping v1.0 documentation at this point.

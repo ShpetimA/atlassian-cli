@@ -28,7 +28,11 @@ import type {
   WorklogsResponse,
   CreateWorklogRequest,
   UpdateWorklogRequest,
+  Attachment,
 } from "../types/jira.js";
+import * as fs from "fs";
+import * as path from "path";
+import FormData from "form-data";
 
 export class JiraClient {
   private client: AxiosInstance;
@@ -488,6 +492,50 @@ export class JiraClient {
   async deleteWorklog(issueKey: string, worklogId: string): Promise<void> {
     try {
       await this.client.delete(`/issue/${issueKey}/worklog/${worklogId}`);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Attachments
+  async getAttachments(issueKey: string): Promise<Attachment[]> {
+    try {
+      const issue = await this.getIssue(issueKey);
+      return issue.fields.attachment || [];
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async addAttachment(issueKey: string, filePath: string): Promise<Attachment[]> {
+    try {
+      const absolutePath = path.resolve(filePath);
+      if (!fs.existsSync(absolutePath)) {
+        throw new Error(`File not found: ${absolutePath}`);
+      }
+
+      const form = new FormData();
+      form.append("file", fs.createReadStream(absolutePath));
+
+      const response = await this.client.post<Attachment[]>(
+        `/issue/${issueKey}/attachments`,
+        form,
+        {
+          headers: {
+            ...form.getHeaders(),
+            "X-Atlassian-Token": "no-check",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async deleteAttachment(attachmentId: string): Promise<void> {
+    try {
+      await this.client.delete(`/attachment/${attachmentId}`);
     } catch (error) {
       this.handleError(error as AxiosError);
     }

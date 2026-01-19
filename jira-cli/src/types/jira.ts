@@ -368,3 +368,16 @@ export interface UpdateWorklogRequest {
   started?: string;
   comment?: ADF | string;
 }
+
+// Attachment types
+export interface Attachment {
+  id: string;
+  self: string;
+  filename: string;
+  author: User;
+  created: string;
+  size: number;
+  mimeType: string;
+  content: string;
+  thumbnail?: string;
+}
