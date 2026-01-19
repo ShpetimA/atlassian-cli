@@ -244,3 +244,36 @@ export interface CreateIssueLinkRequest {
   inwardIssue: { key: string };
   outwardIssue: { key: string };
 }
+
+// Label types
+export interface Label {
+  label: string;
+  total: number;
+}
+
+export interface LabelsResponse {
+  values: Label[];
+  isLast: boolean;
+  maxResults: number;
+  startAt: number;
+  total: number;
+}
+
+// Field types
+export interface JiraField {
+  id: string;
+  key: string;
+  name: string;
+  custom: boolean;
+  orderable: boolean;
+  navigable: boolean;
+  searchable: boolean;
+  clauseNames: string[];
+  schema?: {
+    type: string;
+    items?: string;
+    system?: string;
+    custom?: string;
+    customId?: number;
+  };
+}

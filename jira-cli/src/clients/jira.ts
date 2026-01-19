@@ -18,6 +18,8 @@ import type {
   IssueLinkType,
   IssueLinkTypesResponse,
   CreateIssueLinkRequest,
+  LabelsResponse,
+  JiraField,
 } from "../types/jira.js";
 
 export class JiraClient {
@@ -299,6 +301,33 @@ export class JiraClient {
   async deleteIssueLink(linkId: string): Promise<void> {
     try {
       await this.client.delete(`/issueLink/${linkId}`);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Labels
+  async listLabels(options: {
+    startAt?: number;
+    maxResults?: number;
+  } = {}): Promise<LabelsResponse> {
+    try {
+      const params: Record<string, any> = {
+        startAt: options.startAt || 0,
+        maxResults: options.maxResults || 1000,
+      };
+      const response = await this.client.get<LabelsResponse>("/label", { params });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Fields
+  async listFields(): Promise<JiraField[]> {
+    try {
+      const response = await this.client.get<JiraField[]>("/field");
+      return response.data;
     } catch (error) {
       this.handleError(error as AxiosError);
     }

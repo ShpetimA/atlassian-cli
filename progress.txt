@@ -180,3 +180,30 @@ API coverage:
 - GET /issue/{key} with issuelinks field - get issue links
 
 Note for next person: Phase 7 continues with labels (`jc labels`, `jc fields`, `jc issue add-label`) and filters. Could also do worklogs/attachments but those are P2. Async task polling (Phase 5) still low priority.
+
+## 2026-01-19 - Phase 7 Partial (Labels & Fields)
+
+Implemented `jc label` and `jc field` commands plus issue label management.
+
+Files created:
+- jira-cli/src/commands/label.ts - Label list command
+- jira-cli/src/commands/field.ts - Field list command with filters
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added Label, LabelsResponse, JiraField types
+- jira-cli/src/clients/jira.ts - Added listLabels, listFields methods
+- jira-cli/src/commands/issue.ts - Added add-label, remove-label subcommands
+- jira-cli/src/index.ts - Registered label and field commands
+
+Commands implemented:
+- jc label list [-l limit] [-p page] - List all labels in instance
+- jc field list [--custom|--system] [--searchable] - List fields with filters
+- jc issue add-label <key> <label> - Add label to issue
+- jc issue remove-label <key> <label> - Remove label from issue
+
+API coverage:
+- GET /label - list labels (paginated)
+- GET /field - list all fields
+- PUT /issue/{key} with labels field - add/remove labels
+
+Note for next person: Phase 7 continues with filters (jc filter list/get/create). Worklogs/attachments/watchers are P2. Async task polling still low priority. Consider README once core features done.

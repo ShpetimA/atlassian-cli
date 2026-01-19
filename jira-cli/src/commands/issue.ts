@@ -337,5 +337,59 @@ export function createIssueCommand(): Command {
       output({ success: true, message: `Link ${linkId} deleted` }, format);
     });
 
+  // Add label to issue
+  issue
+    .command("add-label <key> <label>")
+    .description("Add a label to an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, label, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      // Get current labels
+      const issueData = await client.getIssue(key);
+      const currentLabels: string[] = issueData.fields.labels || [];
+
+      if (currentLabels.includes(label)) {
+        output({ success: true, key, message: `Label "${label}" already exists` }, format);
+        return;
+      }
+
+      // Add label via update
+      await client.updateIssue(key, {
+        fields: { labels: [...currentLabels, label] },
+      });
+
+      output({ success: true, key, message: `Added label "${label}"` }, format);
+    });
+
+  // Remove label from issue
+  issue
+    .command("remove-label <key> <label>")
+    .description("Remove a label from an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, label, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      // Get current labels
+      const issueData = await client.getIssue(key);
+      const currentLabels: string[] = issueData.fields.labels || [];
+
+      if (!currentLabels.includes(label)) {
+        output({ success: true, key, message: `Label "${label}" not found on issue` }, format);
+        return;
+      }
+
+      // Remove label via update
+      await client.updateIssue(key, {
+        fields: { labels: currentLabels.filter((l) => l !== label) },
+      });
+
+      output({ success: true, key, message: `Removed label "${label}"` }, format);
+    });
+
   return issue;
 }
