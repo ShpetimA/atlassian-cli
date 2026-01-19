@@ -88,3 +88,46 @@ Usage:
 - jc search query "project = PROJ" → explicit query subcommand
 
 Note for next person: Phase 5 still needs async task polling + jc issue archive. Then Phase 6 Confluence. Consider whether async polling is worth it vs jumping to Confluence which has more user value.
+
+## 2026-01-19 - Phase 6 Complete (Confluence)
+
+Implemented Confluence REST API v2 support in jira-cli.
+
+Files created:
+- jira-cli/src/types/confluence.ts - Space, Page, FooterComment, Label types
+- jira-cli/src/clients/confluence.ts - ConfluenceClient for /wiki/api/v2
+- jira-cli/src/commands/space.ts - Space commands
+- jira-cli/src/commands/page.ts - Page commands (CRUD + comments + labels)
+
+Files modified:
+- jira-cli/src/index.ts - Registered space and page commands
+
+Commands implemented:
+- jc space list [--type global|personal] [--status current|archived]
+- jc space get <id-or-key>
+- jc page list --space <id> [--status] [--sort]
+- jc page get <id> [--body storage|atlas_doc_format|view]
+- jc page create --space <id> --title <title> [--parent <id>] [--body <html>] [--body-file <path>]
+- jc page update <id> --title <title> [--body <html>] [--body-file <path>] [--message <msg>]
+- jc page delete <id>
+- jc page children <id>
+- jc page comments <id>
+- jc page comment <id> <text>
+- jc page labels <id>
+- jc page add-label <id> <label>
+
+API coverage:
+- GET /spaces - list spaces
+- GET /spaces/{id} - get space
+- GET /pages - list pages
+- GET /pages/{id} - get page
+- POST /pages - create page
+- PUT /pages/{id} - update page
+- DELETE /pages/{id} - delete page
+- GET /pages/{id}/children - child pages
+- GET /pages/{id}/footer-comments - list comments
+- POST /footer-comments - add comment
+- GET /pages/{id}/labels - list labels
+- POST /pages/{id}/labels - add label
+
+Note for next person: Phase 7 (Polish) is next: projects, links, labels, filters, worklogs, attachments, watchers. Phase 5 async task polling still outstanding but low priority.

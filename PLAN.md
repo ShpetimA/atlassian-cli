@@ -437,11 +437,11 @@ jc task get 10042
 - [ ] Async task polling
 - [ ] `jc issue archive`
 
-### Phase 6: Confluence
-- [ ] ConfluenceClient
-- [ ] `jc page list/get/create/update/delete`
-- [ ] `jc space list/get`
-- [ ] Page comments
+### Phase 6: Confluence ✅
+- [x] ConfluenceClient
+- [x] `jc page list/get/create/update/delete`
+- [x] `jc space list/get`
+- [x] Page comments + labels
 
 ### Phase 7: Polish
 - [ ] Projects, links, labels, filters

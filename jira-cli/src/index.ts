@@ -7,6 +7,8 @@ import { createSearchCommand } from "./commands/search.js";
 import { createBoardCommand } from "./commands/board.js";
 import { createSprintCommand } from "./commands/sprint.js";
 import { createEpicCommand } from "./commands/epic.js";
+import { createSpaceCommand } from "./commands/space.js";
+import { createPageCommand } from "./commands/page.js";
 
 const program = new Command();
 
@@ -27,5 +29,7 @@ program.addCommand(createSearchCommand());
 program.addCommand(createBoardCommand());
 program.addCommand(createSprintCommand());
 program.addCommand(createEpicCommand());
+program.addCommand(createSpaceCommand());
+program.addCommand(createPageCommand());
 
 program.parse();
