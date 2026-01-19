@@ -10,6 +10,10 @@ import type {
   CreateSprintRequest,
   UpdateSprintRequest,
   MoveIssuesToSprintRequest,
+  Epic,
+  EpicsResponse,
+  MoveIssuesToEpicRequest,
+  RankIssuesRequest,
 } from "../types/agile.js";
 
 export class JiraAgileClient {
@@ -224,6 +228,90 @@ export class JiraAgileClient {
   async moveIssuesToBacklog(issues: string[]): Promise<void> {
     try {
       await this.client.post("/backlog/issue", { issues });
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Epics
+  async listEpics(boardId: number, options: {
+    startAt?: number;
+    maxResults?: number;
+    done?: boolean;
+  } = {}): Promise<EpicsResponse> {
+    try {
+      const response = await this.client.get<EpicsResponse>(`/board/${boardId}/epic`, {
+        params: {
+          startAt: options.startAt || 0,
+          maxResults: options.maxResults || 50,
+          done: options.done,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getEpic(epicIdOrKey: string | number): Promise<Epic> {
+    try {
+      const response = await this.client.get<Epic>(`/epic/${epicIdOrKey}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getEpicIssues(epicIdOrKey: string | number, options: {
+    startAt?: number;
+    maxResults?: number;
+    jql?: string;
+    fields?: string[];
+  } = {}): Promise<BoardIssuesResponse> {
+    try {
+      const response = await this.client.get<BoardIssuesResponse>(`/epic/${epicIdOrKey}/issue`, {
+        params: {
+          startAt: options.startAt || 0,
+          maxResults: options.maxResults || 50,
+          jql: options.jql,
+          fields: options.fields?.join(","),
+        },
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async moveIssuesToEpic(epicIdOrKey: string | number, issues: string[]): Promise<void> {
+    try {
+      const request: MoveIssuesToEpicRequest = { issues };
+      await this.client.post(`/epic/${epicIdOrKey}/issue`, request);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async removeIssuesFromEpic(issues: string[]): Promise<void> {
+    try {
+      await this.client.post("/epic/none/issue", { issues });
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Backlog ranking
+  async rankIssues(issues: string[], options: {
+    rankBeforeIssue?: string;
+    rankAfterIssue?: string;
+  } = {}): Promise<void> {
+    try {
+      const request: RankIssuesRequest = {
+        issues,
+        rankBeforeIssue: options.rankBeforeIssue,
+        rankAfterIssue: options.rankAfterIssue,
+      };
+      await this.client.put("/issue/rank", request);
     } catch (error) {
       this.handleError(error as AxiosError);
     }

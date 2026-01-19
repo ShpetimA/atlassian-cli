@@ -411,11 +411,12 @@ jc task get 10042
 - [x] `jc issue list` / `jc issue get`
 - [x] JSON output
 
-### Phase 2: Issue CRUD + ADF
-- [ ] `jc issue create/edit/delete`
-- [ ] `jc issue assign`
-- [ ] `jc issue transitions/transition`
-- [ ] marklassian integration
+### Phase 2: Issue CRUD + ADF ✅
+- [x] `jc issue create/edit/delete`
+- [x] `jc issue assign`
+- [x] `jc issue transitions/transition`
+- [x] `jc issue comments/comment`
+- [ ] marklassian integration (deferred - raw ADF works)
 
 ### Phase 3: Agile - Boards & Sprints ✅
 - [x] JiraAgileClient
@@ -423,14 +424,16 @@ jc task get 10042
 - [x] `jc sprint list/get/issues/create/start/close`
 - [x] `jc sprint move-issues`
 
-### Phase 4: Agile - Epics & Backlog
-- [ ] `jc epic list/get/issues/move-issues`
-- [ ] `jc backlog issues/move/rank`
-- [ ] Velocity/burndown reports
+### Phase 4: Agile - Epics & Backlog ✅
+- [x] `jc epic list/get/issues/move-issues`
+- [x] `jc epic remove-issues`
+- [x] `jc epic rank` (backlog ranking)
+- [ ] Velocity/burndown reports (P2, deferred)
 
 ### Phase 5: Comments, Search, Bulk
-- [ ] `jc issue comments/comment`
-- [ ] `jc search/search count`
+- [x] `jc issue comments/comment` (moved to Phase 2)
+- [x] `jc search <jql>`
+- [ ] `jc search count` (approximate count)
 - [ ] Async task polling
 - [ ] `jc issue archive`
 

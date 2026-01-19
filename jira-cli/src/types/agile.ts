@@ -93,3 +93,34 @@ export interface MoveIssuesToSprintRequest {
   rankBeforeIssue?: string;
   rankAfterIssue?: string;
 }
+
+// Epics
+export interface Epic {
+  id: number;
+  key: string;
+  self: string;
+  name: string;
+  summary: string;
+  color?: {
+    key: string;
+  };
+  done: boolean;
+}
+
+export interface EpicsResponse {
+  maxResults: number;
+  startAt: number;
+  isLast: boolean;
+  values: Epic[];
+}
+
+export interface MoveIssuesToEpicRequest {
+  issues: string[];
+}
+
+// Backlog ranking
+export interface RankIssuesRequest {
+  issues: string[];
+  rankBeforeIssue?: string;
+  rankAfterIssue?: string;
+}

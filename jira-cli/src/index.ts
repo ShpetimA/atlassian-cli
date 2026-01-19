@@ -6,6 +6,7 @@ import { createConfigCommand } from "./commands/config.js";
 import { createSearchCommand } from "./commands/search.js";
 import { createBoardCommand } from "./commands/board.js";
 import { createSprintCommand } from "./commands/sprint.js";
+import { createEpicCommand } from "./commands/epic.js";
 
 const program = new Command();
 
@@ -25,5 +26,6 @@ program.addCommand(createConfigCommand());
 program.addCommand(createSearchCommand());
 program.addCommand(createBoardCommand());
 program.addCommand(createSprintCommand());
+program.addCommand(createEpicCommand());
 
 program.parse();

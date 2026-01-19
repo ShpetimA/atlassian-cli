@@ -44,3 +44,31 @@ API coverage:
 - Sprints: list, get, issues, create, update (start/close), move issues
 
 Note for next person: Phase 4 (Epics & Backlog) is next. Also Phase 2 still needs marklassian for ADF conversion - lower priority since raw ADF works.
+
+## 2026-01-19 - Phase 4 Complete (Epics & Backlog Ranking)
+
+Added epic management to jira-cli:
+
+Files modified/created:
+- jira-cli/src/types/agile.ts - Added Epic, EpicsResponse, MoveIssuesToEpicRequest, RankIssuesRequest types
+- jira-cli/src/clients/jira-agile.ts - Added listEpics, getEpic, getEpicIssues, moveIssuesToEpic, removeIssuesFromEpic, rankIssues methods
+- jira-cli/src/commands/epic.ts - New file with epic commands
+- jira-cli/src/index.ts - Registered epic command
+
+Commands implemented:
+- jc epic list <board-id> [--done|--not-done]
+- jc epic get <key>
+- jc epic issues <key> [-j jql] [--fields]
+- jc epic move-issues <key> --issues PROJ-1,PROJ-2
+- jc epic remove-issues --issues PROJ-1,PROJ-2
+- jc epic rank --issues PROJ-1 --before|--after PROJ-2
+
+API coverage:
+- GET /board/{id}/epic - list board epics
+- GET /epic/{key} - get epic details
+- GET /epic/{key}/issue - get epic issues
+- POST /epic/{key}/issue - move issues to epic
+- POST /epic/none/issue - remove from epic
+- PUT /issue/rank - reorder backlog
+
+Note for next person: Phase 5 (search count, async task polling, archive) or Phase 6 (Confluence) next. marklassian still deferred. Velocity/burndown reports deferred to P2.
