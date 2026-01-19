@@ -1,0 +1,26 @@
+## 2026-01-19 - Phase 1 Complete (Core + Config)
+
+Implemented jira-cli foundation in jira-cli/ directory:
+
+Files created:
+- jira-cli/package.json - CLI package with `jc` binary
+- jira-cli/tsconfig.json - TypeScript config (ES2022, NodeNext)
+- jira-cli/src/index.ts - CLI entry point with global options
+- jira-cli/src/config.ts - Config file + env var resolution
+- jira-cli/src/clients/jira.ts - JiraClient with basic auth
+- jira-cli/src/types/jira.ts - TypeScript interfaces
+- jira-cli/src/utils/output.ts - JSON/plain/minimal formatters
+- jira-cli/src/commands/issue.ts - Full issue CRUD + comments
+- jira-cli/src/commands/config.ts - Config management
+- jira-cli/src/commands/search.ts - JQL search
+
+Commands implemented:
+- jc issue list/get/create/edit/delete
+- jc issue assign/transitions/transition
+- jc issue comments/comment
+- jc search <jql>
+- jc config init/set/get/list/profile
+
+Auth: env vars (JIRA_DOMAIN, JIRA_EMAIL, JIRA_API_TOKEN) or config file
+
+Note for next person: Phase 2 (Issue CRUD + ADF) partially done since create/edit/delete/assign already implemented. Focus on marklassian integration for proper ADF conversion.

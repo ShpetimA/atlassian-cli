@@ -1,0 +1,261 @@
+import { Command } from "commander";
+import { JiraClient } from "../clients/jira.js";
+import { resolveJiraConfig, getDefaultProject, getDefaultFormat } from "../config.js";
+import { output } from "../utils/output.js";
+import type { OutputFormat, CreateIssueRequest } from "../types/jira.js";
+
+export function createIssueCommand(): Command {
+  const issue = new Command("issue").description("Manage Jira issues");
+
+  // List issues via JQL
+  issue
+    .command("list")
+    .description("List issues via JQL query")
+    .option("-j, --jql <query>", "JQL query string")
+    .option("--project <key>", "Filter by project key")
+    .option("-l, --limit <n>", "Max results", "50")
+    .option("-p, --page <n>", "Page number (1-based)", "1")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      let jql = options.jql || "";
+      const project = options.project || getDefaultProject();
+      if (project && !jql.toLowerCase().includes("project")) {
+        jql = jql ? `project = ${project} AND (${jql})` : `project = ${project}`;
+      }
+      if (!jql) {
+        jql = "ORDER BY updated DESC";
+      }
+
+      const limit = parseInt(options.limit, 10);
+      const page = parseInt(options.page, 10);
+      const startAt = (page - 1) * limit;
+
+      const result = await client.searchIssues(jql, { startAt, maxResults: limit });
+      output(result, format, options.output);
+    });
+
+  // Get single issue
+  issue
+    .command("get <key>")
+    .description("Get issue details")
+    .option("--expand <fields>", "Comma-separated fields to expand")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+      const expand = options.expand?.split(",");
+
+      const result = await client.getIssue(key, expand);
+      output(result, format, options.output);
+    });
+
+  // Create issue
+  issue
+    .command("create")
+    .description("Create a new issue")
+    .requiredOption("--summary <text>", "Issue summary")
+    .option("--project <key>", "Project key")
+    .option("--type <name>", "Issue type", "Task")
+    .option("--description <text>", "Issue description")
+    .option("--priority <name>", "Priority name")
+    .option("--labels <labels>", "Comma-separated labels")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const project = options.project || getDefaultProject();
+      if (!project) {
+        throw new Error("Project key required. Use --project or set JIRA_PROJECT env var");
+      }
+
+      const request: CreateIssueRequest = {
+        fields: {
+          project: { key: project },
+          summary: options.summary,
+          issuetype: { name: options.type },
+        },
+      };
+
+      if (options.description) {
+        request.fields.description = {
+          type: "doc",
+          version: 1,
+          content: [{ type: "paragraph", content: [{ type: "text", text: options.description }] }],
+        };
+      }
+      if (options.priority) {
+        request.fields.priority = { name: options.priority };
+      }
+      if (options.labels) {
+        request.fields.labels = options.labels.split(",").map((l: string) => l.trim());
+      }
+
+      const result = await client.createIssue(request);
+      output(result, format, options.output);
+    });
+
+  // Edit issue
+  issue
+    .command("edit <key>")
+    .description("Update an existing issue")
+    .option("--summary <text>", "New summary")
+    .option("--description <text>", "New description")
+    .option("--priority <name>", "New priority")
+    .option("--labels <labels>", "New labels (comma-separated)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const fields: Record<string, any> = {};
+      if (options.summary) fields.summary = options.summary;
+      if (options.description) {
+        fields.description = {
+          type: "doc",
+          version: 1,
+          content: [{ type: "paragraph", content: [{ type: "text", text: options.description }] }],
+        };
+      }
+      if (options.priority) fields.priority = { name: options.priority };
+      if (options.labels) fields.labels = options.labels.split(",").map((l: string) => l.trim());
+
+      if (Object.keys(fields).length === 0) {
+        throw new Error("No fields to update. Use --summary, --description, --priority, or --labels");
+      }
+
+      await client.updateIssue(key, { fields });
+      output({ success: true, key, message: "Issue updated" }, format);
+    });
+
+  // Delete issue
+  issue
+    .command("delete <key>")
+    .description("Delete an issue")
+    .option("--subtasks", "Also delete subtasks")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      await client.deleteIssue(key, options.subtasks);
+      output({ success: true, key, message: "Issue deleted" }, format);
+    });
+
+  // Assign issue
+  issue
+    .command("assign <key> [user]")
+    .description("Assign issue to user (omit user to unassign)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, user, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      let accountId: string | null = null;
+      if (user) {
+        // Search for user by email or name
+        const users = await client.searchUsers(user);
+        if (users.length === 0) {
+          throw new Error(`User not found: ${user}`);
+        }
+        accountId = users[0].accountId;
+      }
+
+      await client.assignIssue(key, accountId);
+      output({
+        success: true,
+        key,
+        message: user ? `Assigned to ${user}` : "Unassigned",
+      }, format);
+    });
+
+  // List transitions
+  issue
+    .command("transitions <key>")
+    .description("List available transitions for an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const transitions = await client.getTransitions(key);
+      output(transitions, format, options.output);
+    });
+
+  // Transition issue
+  issue
+    .command("transition <key> <status>")
+    .description("Transition issue to a new status")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, status, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      // Find transition by name
+      const transitions = await client.getTransitions(key);
+      const transition = transitions.find(
+        (t) => t.name.toLowerCase() === status.toLowerCase() ||
+               t.to.name.toLowerCase() === status.toLowerCase()
+      );
+
+      if (!transition) {
+        const available = transitions.map((t) => t.name).join(", ");
+        throw new Error(`Transition not found: ${status}. Available: ${available}`);
+      }
+
+      await client.transitionIssue(key, transition.id);
+      output({
+        success: true,
+        key,
+        message: `Transitioned to ${transition.to.name}`,
+      }, format);
+    });
+
+  // List comments
+  issue
+    .command("comments <key>")
+    .description("List comments on an issue")
+    .option("-l, --limit <n>", "Max results", "50")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const result = await client.getComments(key, { maxResults: parseInt(options.limit, 10) });
+      output(result, format, options.output);
+    });
+
+  // Add comment
+  issue
+    .command("comment <key> <text>")
+    .description("Add a comment to an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, text, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const result = await client.addComment(key, text);
+      output(result, format, options.output);
+    });
+
+  return issue;
+}
