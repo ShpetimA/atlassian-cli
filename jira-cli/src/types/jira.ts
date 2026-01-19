@@ -139,3 +139,7 @@ export interface CreateIssueRequest {
 export interface UpdateIssueRequest {
   fields: Partial<CreateIssueRequest["fields"]>;
 }
+
+export interface ApproximateCountResponse {
+  count: number;
+}

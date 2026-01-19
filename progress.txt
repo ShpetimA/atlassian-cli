@@ -72,3 +72,19 @@ API coverage:
 - PUT /issue/rank - reorder backlog
 
 Note for next person: Phase 5 (search count, async task polling, archive) or Phase 6 (Confluence) next. marklassian still deferred. Velocity/burndown reports deferred to P2.
+
+## 2026-01-19 - Phase 5 Partial (Search Count)
+
+Added `jc search count` command for approximate issue counts.
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added ApproximateCountResponse type
+- jira-cli/src/clients/jira.ts - Added getApproximateCount method (POST /search/approximate-count)
+- jira-cli/src/commands/search.ts - Added `count` subcommand, restructured to support both `jc search <jql>` and `jc search count <jql>`
+
+Usage:
+- jc search count "project = PROJ" → { "count": 42 }
+- jc search "project = PROJ" → still works (backwards compatible)
+- jc search query "project = PROJ" → explicit query subcommand
+
+Note for next person: Phase 5 still needs async task polling + jc issue archive. Then Phase 6 Confluence. Consider whether async polling is worth it vs jumping to Confluence which has more user value.

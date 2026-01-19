@@ -9,6 +9,7 @@ import type {
   CommentsResponse,
   CreateIssueRequest,
   UpdateIssueRequest,
+  ApproximateCountResponse,
 } from "../types/jira.js";
 
 export class JiraClient {
@@ -66,6 +67,17 @@ export class JiraClient {
         maxResults: options.maxResults || 50,
         fields: options.fields || ["summary", "status", "priority", "issuetype", "project", "assignee", "reporter", "labels", "created", "updated"],
         expand: options.expand,
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getApproximateCount(jql: string): Promise<ApproximateCountResponse> {
+    try {
+      const response = await this.client.post<ApproximateCountResponse>("/search/approximate-count", {
+        jql,
       });
       return response.data;
     } catch (error) {

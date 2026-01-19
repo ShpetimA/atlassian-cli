@@ -433,7 +433,7 @@ jc task get 10042
 ### Phase 5: Comments, Search, Bulk
 - [x] `jc issue comments/comment` (moved to Phase 2)
 - [x] `jc search <jql>`
-- [ ] `jc search count` (approximate count)
+- [x] `jc search count` (approximate count)
 - [ ] Async task polling
 - [ ] `jc issue archive`
 
