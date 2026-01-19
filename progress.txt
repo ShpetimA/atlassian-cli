@@ -236,3 +236,27 @@ API coverage:
 - DELETE /filter/{id} - delete filter
 
 Note for next person: Phase 7 core complete. Remaining: worklogs/attachments/watchers (P2), error handling/retry, README. Async task polling (Phase 5) still outstanding but low priority. Consider shipping v1.0 and documenting what's done.
+
+## 2026-01-19 - Phase 7 Partial (Worklogs)
+
+Implemented `jc issue worklogs/worklog` commands for time tracking.
+
+Files modified:
+- jira-cli/src/types/jira.ts - Added Worklog, WorklogsResponse, CreateWorklogRequest, UpdateWorklogRequest types
+- jira-cli/src/clients/jira.ts - Added getWorklogs, getWorklog, addWorklog, updateWorklog, deleteWorklog methods
+- jira-cli/src/commands/issue.ts - Added worklogs, worklog, worklog-edit, worklog-delete subcommands
+
+Commands implemented:
+- jc issue worklogs <key> [-l limit] - List worklogs on issue
+- jc issue worklog <key> -t <time> [-c comment] [-s started] - Add worklog
+- jc issue worklog-edit <key> <worklogId> [-t time] [-c comment] [-s started] - Update worklog
+- jc issue worklog-delete <key> <worklogId> - Delete worklog
+
+API coverage:
+- GET /issue/{key}/worklog - list worklogs
+- GET /issue/{key}/worklog/{id} - get worklog
+- POST /issue/{key}/worklog - add worklog
+- PUT /issue/{key}/worklog/{id} - update worklog
+- DELETE /issue/{key}/worklog/{id} - delete worklog
+
+Note for next person: Remaining Phase 7: attachments, watchers. Then error handling/retry, README. Phase 5 async task polling still low priority. Attachments probably next highest value (allow uploading files to issues).

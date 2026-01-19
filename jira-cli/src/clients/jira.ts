@@ -24,6 +24,10 @@ import type {
   FilterSearchResult,
   CreateFilterRequest,
   UpdateFilterRequest,
+  Worklog,
+  WorklogsResponse,
+  CreateWorklogRequest,
+  UpdateWorklogRequest,
 } from "../types/jira.js";
 
 export class JiraClient {
@@ -403,6 +407,87 @@ export class JiraClient {
   async deleteFilter(filterId: string): Promise<void> {
     try {
       await this.client.delete(`/filter/${filterId}`);
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  // Worklogs
+  async getWorklogs(issueKey: string, options: {
+    startAt?: number;
+    maxResults?: number;
+  } = {}): Promise<WorklogsResponse> {
+    try {
+      const params: Record<string, any> = {
+        startAt: options.startAt || 0,
+        maxResults: options.maxResults || 1048576, // Jira default max
+      };
+      const response = await this.client.get<WorklogsResponse>(
+        `/issue/${issueKey}/worklog`,
+        { params }
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async getWorklog(issueKey: string, worklogId: string): Promise<Worklog> {
+    try {
+      const response = await this.client.get<Worklog>(
+        `/issue/${issueKey}/worklog/${worklogId}`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async addWorklog(issueKey: string, request: CreateWorklogRequest): Promise<Worklog> {
+    try {
+      const body: Record<string, any> = {};
+      if (request.timeSpentSeconds) body.timeSpentSeconds = request.timeSpentSeconds;
+      if (request.timeSpent) body.timeSpent = request.timeSpent;
+      if (request.started) body.started = request.started;
+      if (request.comment) {
+        body.comment = typeof request.comment === "string"
+          ? { type: "doc", version: 1, content: [{ type: "paragraph", content: [{ type: "text", text: request.comment }] }] }
+          : request.comment;
+      }
+      const response = await this.client.post<Worklog>(
+        `/issue/${issueKey}/worklog`,
+        body
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async updateWorklog(issueKey: string, worklogId: string, request: UpdateWorklogRequest): Promise<Worklog> {
+    try {
+      const body: Record<string, any> = {};
+      if (request.timeSpentSeconds) body.timeSpentSeconds = request.timeSpentSeconds;
+      if (request.timeSpent) body.timeSpent = request.timeSpent;
+      if (request.started) body.started = request.started;
+      if (request.comment) {
+        body.comment = typeof request.comment === "string"
+          ? { type: "doc", version: 1, content: [{ type: "paragraph", content: [{ type: "text", text: request.comment }] }] }
+          : request.comment;
+      }
+      const response = await this.client.put<Worklog>(
+        `/issue/${issueKey}/worklog/${worklogId}`,
+        body
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+    }
+  }
+
+  async deleteWorklog(issueKey: string, worklogId: string): Promise<void> {
+    try {
+      await this.client.delete(`/issue/${issueKey}/worklog/${worklogId}`);
     } catch (error) {
       this.handleError(error as AxiosError);
     }

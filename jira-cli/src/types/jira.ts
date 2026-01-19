@@ -332,3 +332,39 @@ export interface UpdateFilterRequest {
   favourite?: boolean;
   sharePermissions?: Omit<FilterSharePermission, "id">[];
 }
+
+// Worklog types
+export interface Worklog {
+  id: string;
+  self: string;
+  author: User;
+  updateAuthor: User;
+  comment?: ADF;
+  created: string;
+  updated: string;
+  started: string;
+  timeSpent: string;
+  timeSpentSeconds: number;
+  issueId: string;
+}
+
+export interface WorklogsResponse {
+  startAt: number;
+  maxResults: number;
+  total: number;
+  worklogs: Worklog[];
+}
+
+export interface CreateWorklogRequest {
+  timeSpentSeconds?: number;
+  timeSpent?: string;
+  started?: string;
+  comment?: ADF | string;
+}
+
+export interface UpdateWorklogRequest {
+  timeSpentSeconds?: number;
+  timeSpent?: string;
+  started?: string;
+  comment?: ADF | string;
+}

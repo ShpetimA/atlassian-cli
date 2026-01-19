@@ -448,7 +448,8 @@ jc task get 10042
 - [x] Issue Links (link, links, link-types, unlink)
 - [x] Labels & Fields (label list, field list, issue add-label/remove-label)
 - [x] Filters (list, get, create, update, delete)
-- [ ] Worklogs, attachments, watchers
+- [x] Worklogs (worklogs, worklog, worklog-edit, worklog-delete)
+- [ ] Attachments, watchers
 - [ ] Error handling, retry
 - [ ] README, examples
 

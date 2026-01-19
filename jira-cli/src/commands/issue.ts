@@ -391,5 +391,86 @@ export function createIssueCommand(): Command {
       output({ success: true, key, message: `Removed label "${label}"` }, format);
     });
 
+  // List worklogs
+  issue
+    .command("worklogs <key>")
+    .description("List worklogs on an issue")
+    .option("-l, --limit <n>", "Max results", "50")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const result = await client.getWorklogs(key, { maxResults: parseInt(options.limit, 10) });
+      output(result, format, options.output);
+    });
+
+  // Add worklog
+  issue
+    .command("worklog <key>")
+    .description("Add a worklog to an issue")
+    .requiredOption("-t, --time <duration>", "Time spent (e.g., 1h, 30m, 1h 30m, 1d)")
+    .option("-c, --comment <text>", "Worklog comment")
+    .option("-s, --started <datetime>", "Start time (ISO format, defaults to now)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const request: { timeSpent: string; comment?: string; started?: string } = {
+        timeSpent: options.time,
+      };
+      if (options.comment) request.comment = options.comment;
+      if (options.started) request.started = options.started;
+
+      const result = await client.addWorklog(key, request);
+      output(result, format, options.output);
+    });
+
+  // Update worklog
+  issue
+    .command("worklog-edit <key> <worklogId>")
+    .description("Update a worklog on an issue")
+    .option("-t, --time <duration>", "New time spent (e.g., 1h, 30m)")
+    .option("-c, --comment <text>", "New worklog comment")
+    .option("-s, --started <datetime>", "New start time (ISO format)")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .option("-o, --output <file>", "Output to file")
+    .action(async (key, worklogId, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      const request: { timeSpent?: string; comment?: string; started?: string } = {};
+      if (options.time) request.timeSpent = options.time;
+      if (options.comment) request.comment = options.comment;
+      if (options.started) request.started = options.started;
+
+      if (Object.keys(request).length === 0) {
+        throw new Error("No fields to update. Use --time, --comment, or --started");
+      }
+
+      const result = await client.updateWorklog(key, worklogId, request);
+      output(result, format, options.output);
+    });
+
+  // Delete worklog
+  issue
+    .command("worklog-delete <key> <worklogId>")
+    .description("Delete a worklog from an issue")
+    .option("--format <format>", "Output format: json|plain|minimal")
+    .action(async (key, worklogId, options) => {
+      const config = resolveJiraConfig({});
+      const client = new JiraClient(config);
+      const format = (options.format || getDefaultFormat()) as OutputFormat;
+
+      await client.deleteWorklog(key, worklogId);
+      output({ success: true, key, worklogId, message: "Worklog deleted" }, format);
+    });
+
   return issue;
 }
