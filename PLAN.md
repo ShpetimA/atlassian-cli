@@ -452,7 +452,7 @@ jc task get 10042
 - [x] Attachments (attachments, attach, attachment-delete)
 - [x] Watchers (watchers, watch, unwatch)
 - [ ] Error handling, retry
-- [ ] README, examples
+- [x] README, examples
 
 ---
 

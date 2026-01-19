@@ -304,3 +304,26 @@ API coverage:
 - GET /myself - get current user (for self-watch)
 
 Note for next person: Phase 7 feature work complete. Remaining: error handling/retry, README. Phase 5 async task polling + jc issue archive still deferred. Consider writing README with all command docs, or adding exponential backoff retry to JiraClient.
+
+## 2026-01-19 - README Documentation
+
+Created comprehensive README.md for jira-cli with full command reference.
+
+Files created:
+- jira-cli/README.md - Full documentation with all commands, options, examples
+
+Documentation covers:
+- Installation (bun install + build)
+- Authentication (env vars + config file)
+- Global options (--format, --output, --domain, --profile, --debug)
+- All issue commands (CRUD, comments, links, labels, worklogs, attachments, watchers)
+- Search commands (query, count)
+- Project commands (list, get, statuses, components, versions)
+- Filter commands (list, get, create, update, delete)
+- Agile commands (boards, sprints, epics)
+- Confluence commands (spaces, pages)
+- Config commands
+- Output format examples
+- "Not Implemented" section documenting gaps
+
+Note for next person: README done. Remaining work: error handling/retry (exponential backoff in JiraClient), async task polling (Phase 5). Consider shipping v1.0 at this point - all features documented and working.
