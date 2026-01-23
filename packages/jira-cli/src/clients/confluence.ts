@@ -20,7 +20,9 @@ export class ConfluenceClient {
 
   constructor(config: JiraConfig) {
     // Confluence API v2: https://{domain}.atlassian.net/wiki/api/v2
-    const baseURL = `https://${config.domain}.atlassian.net/wiki/api/v2`;
+    // Support both formats: "example" or "example.atlassian.net"
+    const host = config.domain.includes('.') ? config.domain : `${config.domain}.atlassian.net`;
+    const baseURL = `https://${host}/wiki/api/v2`;
     const auth = Buffer.from(`${config.email}:${config.apiToken}`).toString("base64");
 
     this.client = axios.create({

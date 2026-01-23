@@ -1,26 +1,14 @@
 {
-  "name": "bitbucket-cli",
+  "name": "atlassian-cli-tools",
   "version": "1.0.0",
-  "description": "Bitbucket CLI for AI agents",
-  "type": "module",
-  "main": "dist/index.js",
-  "bin": {
-    "bb": "dist/index.js"
-  },
+  "private": true,
+  "description": "Monorepo for Atlassian CLI tools (Bitbucket, Jira, Confluence)",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc && bun link",
-    "dev": "tsc --watch",
-    "start": "bun dist/index.js"
-  },
-  "keywords": ["bitbucket", "cli"],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^1.13.2",
-    "commander": "^14.0.2"
-  },
-  "devDependencies": {
-    "@types/node": "^25.0.8",
-    "typescript": "^5.9.3"
+    "build": "bun run --filter '*' build",
+    "build:bb": "bun run --cwd packages/bitbucket-cli build",
+    "build:jira": "bun run --cwd packages/jira-cli build"
   }
 }

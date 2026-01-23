@@ -44,7 +44,9 @@ export class JiraClient {
 
   constructor(config: JiraConfig) {
     this.domain = config.domain;
-    const baseURL = `https://${config.domain}.atlassian.net/rest/api/3`;
+    // Support both formats: "example" or "example.atlassian.net"
+    const host = config.domain.includes('.') ? config.domain : `${config.domain}.atlassian.net`;
+    const baseURL = `https://${host}/rest/api/3`;
     const auth = Buffer.from(`${config.email}:${config.apiToken}`).toString("base64");
 
     this.client = axios.create({
@@ -88,15 +90,21 @@ export class JiraClient {
     maxResults?: number;
     fields?: string[];
     expand?: string[];
+    nextPageToken?: string;
   } = {}): Promise<IssueSearchResult> {
     try {
-      const response = await this.client.post<IssueSearchResult>("/search/jql", {
+      const body: Record<string, any> = {
         jql,
-        startAt: options.startAt || 0,
         maxResults: options.maxResults || 50,
         fields: options.fields || ["summary", "status", "priority", "issuetype", "project", "assignee", "reporter", "labels", "created", "updated"],
-        expand: options.expand,
-      });
+      };
+      if (options.expand?.length) {
+        body.expand = options.expand.join(",");
+      }
+      if (options.nextPageToken) {
+        body.nextPageToken = options.nextPageToken;
+      }
+      const response = await this.client.post<IssueSearchResult>("/search/jql", body);
       return response.data;
     } catch (error) {
       this.handleError(error as AxiosError);

@@ -21,7 +21,9 @@ export class JiraAgileClient {
   private client: AxiosInstance;
 
   constructor(config: JiraConfig) {
-    const baseURL = `https://${config.domain}.atlassian.net/rest/agile/1.0`;
+    // Support both formats: "example" or "example.atlassian.net"
+    const host = config.domain.includes('.') ? config.domain : `${config.domain}.atlassian.net`;
+    const baseURL = `https://${host}/rest/agile/1.0`;
     const auth = Buffer.from(`${config.email}:${config.apiToken}`).toString("base64");
 
     this.client = axios.create({
