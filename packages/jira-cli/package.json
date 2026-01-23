@@ -1,0 +1,27 @@
+{
+  "name": "jira-cli",
+  "version": "1.0.0",
+  "description": "Jira & Confluence CLI for AI agents",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "jc": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc && bun link",
+    "dev": "tsc --watch",
+    "start": "bun dist/index.js"
+  },
+  "keywords": ["jira", "confluence", "cli", "atlassian"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "commander": "^14.0.2",
+    "form-data": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.8",
+    "typescript": "^5.9.3"
+  }
+}
