@@ -1,20 +1,29 @@
 {
-  "name": "jira-cli",
+  "name": "@happy2png/jira-cli",
   "version": "1.0.0",
-  "description": "Jira & Confluence CLI for AI agents",
+  "description": "Jira & Confluence CLI for developers and AI agents",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "jc": "dist/index.js"
   },
+  "files": ["dist"],
   "scripts": {
     "build": "tsc && bun link",
     "dev": "tsc --watch",
     "start": "bun dist/index.js"
   },
-  "keywords": ["jira", "confluence", "cli", "atlassian"],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["jira", "confluence", "cli", "atlassian", "issue-tracker"],
+  "author": "ShpetimA",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShpetimA/bitbucket-cli.git",
+    "directory": "packages/jira-cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "axios": "^1.13.2",
     "commander": "^14.0.2",

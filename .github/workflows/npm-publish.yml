@@ -1,0 +1,60 @@
+name: Publish to npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to publish'
+        required: true
+        type: choice
+        options:
+          - bitbucket-cli
+          - jira-cli
+          - both
+
+jobs:
+  publish-bb:
+    if: ${{ inputs.package == 'bitbucket-cli' || inputs.package == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install and build
+        run: |
+          bun install
+          bun run build
+        working-directory: packages/bitbucket-cli
+
+      - name: Publish
+        run: npm publish
+        working-directory: packages/bitbucket-cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-jira:
+    if: ${{ inputs.package == 'jira-cli' || inputs.package == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install and build
+        run: |
+          bun install
+          bun run build
+        working-directory: packages/jira-cli
+
+      - name: Publish
+        run: npm publish
+        working-directory: packages/jira-cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
