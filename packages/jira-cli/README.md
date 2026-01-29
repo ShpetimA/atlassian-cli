@@ -8,13 +8,29 @@ CLI for Jira Cloud REST API v3 and Confluence Cloud REST API v2. JSON-first outp
 # npm
 npm install -g @happy2png/jira-cli
 
-# curl (standalone binary)
+# curl (standalone binary - macOS/Linux)
 curl -fsSL https://raw.githubusercontent.com/ShpetimA/atlassian-cli/main/install-jira.sh | bash
 
 # from source
 cd jira-cli
 bun install
 bun run build  # compiles and links `jc` globally
+```
+
+### Add to PATH (curl install)
+
+**macOS/Linux** - add to `~/.zshrc` or `~/.bashrc`:
+```bash
+export PATH="$PATH:$HOME/.local/bin"
+```
+
+**Windows** (PowerShell):
+```powershell
+# Download binary
+Invoke-WebRequest -Uri "https://github.com/ShpetimA/atlassian-cli/releases/latest/download/jc-windows-x64.exe" -OutFile "$env:LOCALAPPDATA\jc.exe"
+
+# Add to PATH (run as admin or add to user PATH via System Properties)
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:LOCALAPPDATA", "User")
 ```
 
 ## Authentication

@@ -8,8 +8,24 @@ CLI for Bitbucket Cloud API - manage repos, pull requests, diffs, and comments.
 # npm
 npm install -g @happy2png/bitbucket-cli
 
-# curl (standalone binary)
+# curl (standalone binary - macOS/Linux)
 curl -fsSL https://raw.githubusercontent.com/ShpetimA/atlassian-cli/main/install-bb.sh | bash
+```
+
+### Add to PATH (curl install)
+
+**macOS/Linux** - add to `~/.zshrc` or `~/.bashrc`:
+```bash
+export PATH="$PATH:$HOME/.local/bin"
+```
+
+**Windows** (PowerShell):
+```powershell
+# Download binary
+Invoke-WebRequest -Uri "https://github.com/ShpetimA/atlassian-cli/releases/latest/download/bb-windows-x64.exe" -OutFile "$env:LOCALAPPDATA\bb.exe"
+
+# Add to PATH (run as admin or add to user PATH via System Properties)
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:LOCALAPPDATA", "User")
 ```
 
 ## Environment Variables

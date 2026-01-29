@@ -54,6 +54,5 @@ echo "Installed ${BINARY} to ${INSTALL_DIR}/${BINARY}"
 # Check if in PATH
 if [[ ":$PATH:" != *":${INSTALL_DIR}:"* ]]; then
   echo ""
-  echo "Add to PATH by adding this to your shell profile:"
-  echo "  export PATH=\"\$PATH:${INSTALL_DIR}\""
+  echo "Add to PATH: export PATH=\"\$PATH:${INSTALL_DIR}\""
 fi
