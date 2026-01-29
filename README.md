@@ -15,10 +15,10 @@ CLI tools for Bitbucket, Jira, and Confluence.
 
 ```bash
 # Bitbucket CLI
-curl -fsSL https://raw.githubusercontent.com/ShpetimA/bitbucket-cli/main/install-bb.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ShpetimA/atlassian-cli/main/install-bb.sh | bash
 
 # Jira CLI
-curl -fsSL https://raw.githubusercontent.com/ShpetimA/bitbucket-cli/main/install-jira.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ShpetimA/atlassian-cli/main/install-jira.sh | bash
 ```
 
 Installs to `~/.local/bin`. Add to PATH if needed:

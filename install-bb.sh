@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REPO="ShpetimA/bitbucket-cli"
+REPO="ShpetimA/atlassian-cli"
 BINARY="bb"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 

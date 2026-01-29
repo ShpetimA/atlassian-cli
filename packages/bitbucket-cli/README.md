@@ -9,7 +9,7 @@ CLI for Bitbucket Cloud API - manage repos, pull requests, diffs, and comments.
 npm install -g @happy2png/bitbucket-cli
 
 # curl (standalone binary)
-curl -fsSL https://raw.githubusercontent.com/ShpetimA/bitbucket-cli/main/install-bb.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ShpetimA/atlassian-cli/main/install-bb.sh | bash
 ```
 
 ## Environment Variables
@@ -85,7 +85,7 @@ bb pr commits <repo> <id>             # PR commits
 
 ## Full Reference
 
-See [docs/bb-cli.md](https://github.com/ShpetimA/bitbucket-cli/blob/main/docs/bb-cli.md) for all commands and options.
+See [docs/bb-cli.md](https://github.com/ShpetimA/atlassian-cli/blob/main/docs/bb-cli.md) for all commands and options.
 
 ## License
 

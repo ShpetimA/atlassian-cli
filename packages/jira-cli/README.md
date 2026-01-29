@@ -9,7 +9,7 @@ CLI for Jira Cloud REST API v3 and Confluence Cloud REST API v2. JSON-first outp
 npm install -g @happy2png/jira-cli
 
 # curl (standalone binary)
-curl -fsSL https://raw.githubusercontent.com/ShpetimA/bitbucket-cli/main/install-jira.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ShpetimA/atlassian-cli/main/install-jira.sh | bash
 
 # from source
 cd jira-cli

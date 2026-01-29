@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ShpetimA/bitbucket-cli.git",
+    "url": "https://github.com/ShpetimA/atlassian-cli.git",
     "directory": "packages/jira-cli"
   },
   "publishConfig": {
