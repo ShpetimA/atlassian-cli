@@ -1,19 +1,27 @@
 {
   "name": "@happy2png/bitbucket-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Bitbucket CLI for developers and AI agents",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "bb": "dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc && bun link",
     "dev": "tsc --watch",
     "start": "bun dist/index.js"
   },
-  "keywords": ["bitbucket", "cli", "atlassian", "git", "pull-request"],
+  "keywords": [
+    "bitbucket",
+    "cli",
+    "atlassian",
+    "git",
+    "pull-request"
+  ],
   "author": "ShpetimA",
   "license": "MIT",
   "repository": {

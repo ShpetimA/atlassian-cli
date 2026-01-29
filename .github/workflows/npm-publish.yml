@@ -31,7 +31,7 @@ jobs:
         working-directory: packages/bitbucket-cli
 
       - name: Publish
-        run: npm publish
+        run: npm publish --access public
         working-directory: packages/bitbucket-cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -50,11 +50,11 @@ jobs:
       - name: Install and build
         run: |
           bun install
-          bun run build
+          bun run build:npm
         working-directory: packages/jira-cli
 
       - name: Publish
-        run: npm publish
+        run: npm publish --access public
         working-directory: packages/jira-cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

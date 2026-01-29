@@ -1,19 +1,29 @@
 {
   "name": "@happy2png/jira-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Jira & Confluence CLI for developers and AI agents",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "jc": "dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc && bun link",
+    "build:npm": "bun build ./src/index.ts --outfile ./dist/index.js --target node --format esm --packages=external --external axios --external commander --external form-data && cp ./src/index.ts ./dist/index.d.ts",
+    "prepublishOnly": "bun run build:npm",
     "dev": "tsc --watch",
     "start": "bun dist/index.js"
   },
-  "keywords": ["jira", "confluence", "cli", "atlassian", "issue-tracker"],
+  "keywords": [
+    "jira",
+    "confluence",
+    "cli",
+    "atlassian",
+    "issue-tracker"
+  ],
   "author": "ShpetimA",
   "license": "MIT",
   "repository": {
