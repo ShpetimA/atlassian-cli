@@ -5,6 +5,13 @@ CLI for Jira Cloud REST API v3 and Confluence Cloud REST API v2. JSON-first outp
 ## Install
 
 ```bash
+# npm
+npm install -g @happy2png/jira-cli
+
+# curl (standalone binary)
+curl -fsSL https://raw.githubusercontent.com/ShpetimA/bitbucket-cli/main/install-jira.sh | bash
+
+# from source
 cd jira-cli
 bun install
 bun run build  # compiles and links `jc` globally
@@ -257,10 +264,17 @@ jc issue list -o issues.json      # write to file
 
 ---
 
-## Not Implemented
+## Async Tasks
 
-- `jc issue archive` (async task polling)
-- `jc task get/cancel` (async operations)
-- `jc board velocity/burndown` (reports)
-- `jc blog` (Confluence blog posts)
-- marklassian ADF conversion
+```bash
+jc issue archive -j "project = OLD"   # archive issues (async)
+jc issue archive --issues KEY-1,KEY-2 --wait
+jc task get <taskId>                  # check task status
+jc task cancel <taskId>               # cancel running task
+```
+
+---
+
+## License
+
+MIT
